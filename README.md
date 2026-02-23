@@ -97,17 +97,14 @@ edgebench profile models/yolov8n.onnx \
   --intra-threads 1 --inter-threads 1
 ```
 
+리포트 JSON: `reports/yolov8n__onnxruntime_cpu__b1__r50__*.json`
+
+벤치마크 측정 방법론: `docs/benchmarking.md`
+
 ## 📜 License
 
 MIT License
 
 ---
 
-# 2) docs/benchmarking.md 파일을 새로 만들기 (상세 안내)
 
-## 2-1) 폴더/파일 생성
-레포 루트에서 터미널로:
-
-```bash
-mkdir -p docs
-touch docs/benchmarking.md
