@@ -71,6 +71,43 @@ CLI 기반 구조:
 
 ---
 
+## 📈 Benchmarks (예시 결과)
+
+> 환경: GitHub Codespaces (Linux x86_64), ONNX Runtime CPU  
+> 설정: warmup=10, intra_threads=1, inter_threads=1
+
+### YOLOv8n (640×640, batch=1)
+
+- Parameters: 3,193,923
+- Latency (ms):
+  - mean: 120.22
+  - p50: 115.67
+  - p90: 125.57
+  - p99: 166.38
+  - std: 11.84
+  - min/max: 113.42 / 172.68
+
+리포트 JSON: `reports/yolov8n__onnxruntime_cpu__b1__r50__*.json`
+
+### 실행 명령
+
+```bash
+edgebench profile models/yolov8n.onnx \
+  --warmup 10 --runs 50 --batch 1 \
+  --intra-threads 1 --inter-threads 1
+```
+
 ## 📜 License
 
 MIT License
+
+---
+
+# 2) docs/benchmarking.md 파일을 새로 만들기 (상세 안내)
+
+## 2-1) 폴더/파일 생성
+레포 루트에서 터미널로:
+
+```bash
+mkdir -p docs
+touch docs/benchmarking.md
