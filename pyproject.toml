@@ -1,0 +1,21 @@
+[project]
+name = "edgebench"
+version = "0.1.0"
+description = "Edge AI Inference Profiling Framework"
+authors = [{ name = "Your Name" }]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "onnx",
+    "onnxruntime",
+    "numpy",
+    "rich",
+    "typer"
+]
+
+[project.scripts]
+edgebench = "edgebench.cli:app"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
