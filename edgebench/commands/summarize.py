@@ -5,6 +5,7 @@ import json
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
+import os
 import typer
 from rich import print as rprint
 
@@ -73,6 +74,7 @@ def summarize(
     format: str = typer.Option("md", "--format", help="md"),
     sort: str = typer.Option("p99", "--sort", help="p99/mean/flops"),
     top: int = typer.Option(0, "--top", help="0이면 전체, 아니면 상위 N개"),
+    output: str = typer.Option("", "--output", "-o", help="출력 파일 경로(미지정 시 stdout)"),
 ):
     paths = sorted(glob.glob(pattern))
     if not paths:
@@ -97,4 +99,12 @@ def summarize(
     if format != "md":
         raise typer.BadParameter("--format currently supports only: md")
 
-    print(_md_table(rows))
+    text = _md_table(rows) + "\n"
+
+    if output:
+        os.makedirs(os.path.dirname(output) or ".", exist_ok=True)
+        with open(output, "w", encoding="utf-8") as f:
+            f.write(text)
+        rprint(f"[green]Saved[/green]: {output}")
+    else:
+        print(text, end="")
