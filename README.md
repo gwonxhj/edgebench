@@ -71,14 +71,20 @@ CLI 기반 구조:
 
 ---
 
-## 📈 Benchmarks (예시 결과)
+## 📈 Benchmarks
+
+EdgeBench는 정적 지표(FLOPs, Parameters)와 동적 지표(Latency)를 하나의 리포트 스키마로 통합 제공합니다.
 
 > 환경: GitHub Codespaces (Linux x86_64), ONNX Runtime CPU  
 > 설정: warmup=10, intra_threads=1, inter_threads=1
 
 ### YOLOv8n (640×640, batch=1)
 
+> 환경: GitHub Codespaces (Linux x86_64), ONNX Runtime CPU  
+> 설정: warmup=10, runs=50, intra_threads=1, inter_threads=1
+
 - Parameters: 3,193,923
+- FLOPs (est): 644,336,844,800
 - Latency (ms):
   - mean: 120.22
   - p50: 115.67
@@ -89,18 +95,20 @@ CLI 기반 구조:
 
 리포트 JSON: `reports/yolov8n__onnxruntime_cpu__b1__r50__*.json`
 
-### ToyNet (dynamic H/W, batch=1)
+### ToyNet (FLOPs ↔ Latency Scaling Validation)
 
 > 환경: GitHub Codespaces (Linux x86_64), ONNX Runtime CPU  
-> 설정: warmup=10, runs=300, intra_threads=1, inter_threads=1
+> 설정: warmup=10, runs=300, intra_threads=1, inter_threads=1  
+> 모델: Conv/Linear 기반 ToyNet (dynamic H/W)
 
-| Input | Mean (ms) | P50 (ms) | P90 (ms) | P99 (ms) |
-|---|---:|---:|---:|---:|
-| 224×224 | 0.538 | 0.501 | 0.723 | 0.764 |
-| 320×320 | 1.131 | 1.014 | 1.424 | 1.455 |
-| 640×640 | 4.589 | 4.083 | 5.834 | 9.302 |
+| Input (HxW) | FLOPs (est) | Mean (ms) | P99 (ms) |
+|---:|---:|---:|---:|
+| 224×224 | 126,444,160 | 0.546 | 1.027 |
+| 320×320 | 258,048,640 | 1.073 | 1.470 |
+| 640×640 | 1,032,192,640 | 4.424 | 6.771 |
 
-> 입력 해상도 증가에 따라 latency가 면적에 비례해 증가하는 경향을 확인할 수 있습니다.
+> 입력 해상도 증가에 따라 FLOPs는 면적(H×W)에 비례해 증가하며,  
+> 실제 latency 역시 유사한 스케일링 경향을 보임을 확인할 수 있습니다.
 
 ### 실행 명령
 
