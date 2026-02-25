@@ -1,12 +1,33 @@
 .PHONY: demo_deps demo_models demo_profile
+
+SIZES ?= 224 320 640
+RUNS  ?= 300
+BATCH ?= 1
+WARMUP ?= 10
+INTRA ?= 1
+INTER ?= 1
+
 demo_deps:
-	pip install torch onnxscript
+	poetry install
+	poetry run python -m pip install -U pip
+	poetry run python -m pip install torch onnxscript
 
-demo_models: demo_deps
+demo_models:
 	mkdir -p models
-	python scripts/make_toy_model.py --height 224 --width 224 --out models/toy.onnx
 
-demo_profile: demo_models
-	edgebench profile models/toy.onnx --runs 300 --height 224 --width 224 --intra-threads 1 --inter-threads 1
-	edgebench profile models/toy.onnx --runs 300 --height 320 --width 320 --intra-threads 1 --inter-threads 1
-	edgebench profile models/toy.onnx --runs 300 --height 640 --width 640 --intra-threads 1 --inter-threads 1
+demo_profile: demo_deps demo_models
+	mkdir -p reports
+	@set -e; \
+	for s in $(SIZES); do \
+		echo "==> Generating toy model: $${s}x$${s}"; \
+		poetry run python scripts/make_toy_model.py --height $$s --width $$s --out models/toy$${s}.onnx; \
+		echo "==> Profiling: models/toy$${s}.onnx"; \
+		poetry run edgebench profile models/toy$${s}.onnx \
+			--warmup $(WARMUP) \
+			--runs $(RUNS) \
+			--batch $(BATCH) \
+			--intra-threads $(INTRA) \
+			--inter-threads $(INTER) \
+			-o reports/toy$${s}__onnxruntime_cpu__b$(BATCH)__r$(RUNS)__t$(INTRA)x$(INTER).json; \
+	done
+	@echo "Done. Reports saved under ./reports/"
