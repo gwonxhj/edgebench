@@ -7,6 +7,11 @@ WARMUP ?= 10
 INTRA ?= 1
 INTER ?= 1
 
+save:
+	git add -A
+	git commit -m "Auto-save $$(data -u +%Y-%m-%dT%H:%M:%SZ)" || true
+	git push
+
 demo_deps:
 	poetry install
 	poetry run python -m pip install -U pip
