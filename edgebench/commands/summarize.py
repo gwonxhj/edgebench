@@ -55,12 +55,16 @@ def _to_row(path: str, d: Dict[str, Any]) -> Row:
 
 def _md_table(rows: List[Row]) -> str:
     lines = []
+
+    def _f3(x):
+        return "-" if x is None else f"{x:.3f}"
+
     lines.append("| Model | Engine | Device | Input(HxW) | FLOPs | Mean (ms) | P99 (ms) |")
     lines.append("|---|---|---|---:|---:|---:|---:|")
     for r in rows:
         hw = f"{r.h}x{r.w}" if (r.h and r.w) else "-"
         lines.append(
-            f"| {r.model} | {r.engine} | {r.device} | {hw} | {r.flops or '-'} | {r.mean_ms or '-'} | {r.p99_ms or '-'} |"
+            f"| {r.model} | {r.engine} | {r.device} | {hw} | {r.flops or '-'} | {_f3(r.mean_ms)} | {_f3(r.p99_ms)} |"
         )
     return "\n".join(lines)
 
@@ -93,4 +97,4 @@ def summarize(
     if format != "md":
         raise typer.BadParameter("--format currently supports only: md")
 
-    rprint(_md_table(rows))
+    print(_md_table(rows))
