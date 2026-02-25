@@ -32,7 +32,7 @@ def export_model(output_path="toy_model.onnx", height=224, width=224):
         input_names=["images"],
         output_names=["logits"],
         dynamic_axes={"images": {2: "height", 3: "width"}},
-        opset_version=12,
+        opset_version=18,
     )
 
     print(f"Exported: {output_path}")

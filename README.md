@@ -89,6 +89,19 @@ CLI 기반 구조:
 
 리포트 JSON: `reports/yolov8n__onnxruntime_cpu__b1__r50__*.json`
 
+### ToyNet (dynamic H/W, batch=1)
+
+> 환경: GitHub Codespaces (Linux x86_64), ONNX Runtime CPU  
+> 설정: warmup=10, runs=300, intra_threads=1, inter_threads=1
+
+| Input | Mean (ms) | P50 (ms) | P90 (ms) | P99 (ms) |
+|---|---:|---:|---:|---:|
+| 224×224 | 0.538 | 0.501 | 0.723 | 0.764 |
+| 320×320 | 1.131 | 1.014 | 1.424 | 1.455 |
+| 640×640 | 4.589 | 4.083 | 5.834 | 9.302 |
+
+> 입력 해상도 증가에 따라 latency가 면적에 비례해 증가하는 경향을 확인할 수 있습니다.
+
 ### 실행 명령
 
 ```bash

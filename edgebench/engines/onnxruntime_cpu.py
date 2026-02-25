@@ -91,7 +91,12 @@ class OnnxRuntimeCpuEngine:
 
         self.outputs = [o.name for o in m.graph.output]
 
-    def make_dummy_inputs(self, batch_override: Optional[int] = None) -> Dict[str, Any]:
+    def make_dummy_inputs(
+        self,
+        batch_override: Optional[int] = None,
+        height_override: Optional[int] = None,
+        width_override: Optional[int] = None,
+    ) -> Dict[str, Any]:
         """
         Create random inputs based on model input shapes.
         Unknown dims(None) will be replaced by:
@@ -108,6 +113,10 @@ class OnnxRuntimeCpuEngine:
                 if d is None:
                     if i == 0:
                         shape.append(int(batch_override) if batch_override is not None else 1)
+                    elif i == 2 and height_override is not None:
+                        shape.append(int(height_override))
+                    elif i == 3 and width_override is not None:
+                        shape.append(int(width_override))
                     else:
                         shape.append(1)
                 else:
