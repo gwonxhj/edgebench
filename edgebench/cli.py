@@ -17,13 +17,20 @@ def analyze(
     model_path: str = typer.Argument(..., help="분석할 ONNX 모델 경로"),
     output: str = typer.Option("", "--output", "-o", help="JSON 리포트 저장 경로(미지정 시 stdout 출력)"),
     no_hash: bool = typer.Option(False, "--no-hash", help="모델 SHA256 해시 계산 비활성화(대형 모델에서 빠름)"),
+    height: int = typer.Option(0, "--height", help="FLOPs 계산용 입력 height (0이면 사용 안 함)"),
+    width: int = typer.Option(0, "--width", help="FLOPs 계산용 입력 width (0이면 사용 안 함)"),
 ):
     """
     ONNX 모델을 정적 분석하고 JSON 리포트를 출력합니다.
     """
     rprint(f"[bold]Analyzing[/bold]: {model_path}")
 
-    result = analyze_onnx(model_path, compute_hash=(not no_hash))
+    result = analyze_onnx(
+        model_path,
+        compute_hash=(not no_hash),
+        height=height if height > 0 else None,
+        width=width if width > 0 else None,
+    )
     sysinfo = collect_system_info()
     pkgs = collect_package_versions()
 
@@ -39,7 +46,7 @@ def analyze(
             parameters=result.parameters, 
             inputs=result.inputs, 
             outputs=result.outputs,
-            flops_estimate=None,
+            flops_estimate=result.flops_estimate,
         ),
         system=SystemInfo(
             os=sysinfo["os"],
@@ -50,6 +57,7 @@ def analyze(
             "machine": sysinfo.get("machine"),
             "notes": "Phase 1 static analyze",
         },
+        runtime=None,
     )
 
     if output:
@@ -77,7 +85,12 @@ def profile(
     rprint(f"[bold]Profiling[/bold]: {model_path}")
 
     # 1) 정적 분석도 같이 포함(리포트 일관성)
-    result = analyze_onnx(model_path, compute_hash=(not no_hash))
+    result = analyze_onnx(
+        model_path,
+        compute_hash=(not no_hash),
+        height=height if height > 0 else None,
+        width=width if width > 0 else None,
+    )
     sysinfo = collect_system_info()
     pkgs = collect_package_versions()
 
@@ -105,7 +118,7 @@ def profile(
             parameters=result.parameters,
             inputs=result.inputs,
             outputs=result.outputs,
-            flops_estimate=None,
+            flops_estimate=result.flops_estimate,
         ),
         runtime=RuntimeProfile(
             engine=prof.engine,

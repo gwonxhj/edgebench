@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1",
+  "timestamp": "2026-02-25T09:20:30Z",
+  "model": {
+    "path": "models/toy.onnx",
+    "file_size_bytes": 10638,
+    "sha256": null
+  },
+  "static": {
+    "parameters": 5422,
+    "inputs": [
+      {
+        "name": "images",
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          3,
+          null,
+          null
+        ],
+        "shape_symbols": [
+          null,
+          null,
+          "height",
+          "width"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "logits",
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          10
+        ]
+      }
+    ],
+    "flops_estimate": 126444160
+  },
+  "system": {
+    "os": "Linux 6.8.0-1030-azure",
+    "python": "3.12.1",
+    "packages": {
+      "onnx": "1.20.1",
+      "onnxruntime": "1.24.2"
+    }
+  },
+  "meta": {
+    "machine": "x86_64",
+    "notes": "Phase 1 profile"
+  },
+  "runtime": {
+    "engine": "onnxruntime",
+    "device": "cpu",
+    "warmup": 10,
+    "runs": 300,
+    "latency_ms": {
+      "mean": 0.5418220033364681,
+      "std": 0.08317648674392615,
+      "p50": 0.5035145004512742,
+      "p90": 0.7172259997787478,
+      "p99": 0.7558329300081823,
+      "min": 0.4887220002274262,
+      "max": 0.7683329995415988
+    },
+    "extra": {
+      "batch": 1,
+      "input_names": [
+        "images"
+      ],
+      "intra_threads": 1,
+      "inter_threads": 1,
+      "height": 224,
+      "width": 224
+    }
+  }
+}

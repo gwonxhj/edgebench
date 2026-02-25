@@ -58,6 +58,8 @@ def profile_onnxruntime_cpu(
         width_override=width,
     )
 
+    input_names = list(feeds.keys())
+
     #warmup
     for _ in range(warmup):
         engine.run(feeds)
@@ -78,7 +80,7 @@ def profile_onnxruntime_cpu(
         "intra_threads": intra_threads,
         "inter_threads": inter_threads,
         "height": height,
-        "width":width,
+        "width": width,
     }
 
     return ProfileResult(

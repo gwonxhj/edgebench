@@ -40,11 +40,11 @@ class RuntimeProfile:
 class EdgeBenchReport:
     schema_version: str
     timestamp: str
-    model: ModelInfo
-    static: StaticAnalysis
-    runtime: Optional[RuntimeProfile]
-    system: SystemInfo
+    model: "ModelInfo"
+    static: "StaticAnalysis"
+    system: "SystemInfo"
     meta: Dict[str, Any]
+    runtime: Optional[RuntimeProfile] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

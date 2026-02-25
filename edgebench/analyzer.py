@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
+from edgebench.flops import estimate_flops_conv_gemm
+
 import hashlib
 import os
 import platform
@@ -79,14 +81,30 @@ class AnalyzeResult:
     sha256: str
     inputs: List[Dict[str, Any]]
     outputs: List[Dict[str, Any]]
+    flops_estimate: Optional[int]
 
-def analyze_onnx(model_path: str, compute_hash: bool = True) -> AnalyzeResult:
+def analyze_onnx(
+    model_path: str,
+    compute_hash: bool = True,
+    height: int | None = None,
+    width: int | None = None,
+):
     if not os.path.isfile(model_path):
         raise FileNotFoundError(f"ONNX 모델 파일을 찾을 수 없습니다: {model_path}")
 
     file_size = os.path.getsize(model_path)
 
     model = onnx.load(model_path)
+
+    flops_est = estimate_flops_conv_gemm(
+        model,
+        height=height,
+        width=width,
+        batch=1,
+    )
+
+    flops_total = flops_est.total if flops_est is not None else None
+
     onnx.checker.check_model(model)
 
     params = count_parameters(model)
@@ -99,6 +117,7 @@ def analyze_onnx(model_path: str, compute_hash: bool = True) -> AnalyzeResult:
         sha256=h,
         inputs=inputs,
         outputs=outputs,
+        flops_estimate=flops_total,
     )
 
 def collect_system_info() -> Dict[str, Any]:
