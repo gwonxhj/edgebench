@@ -41,6 +41,8 @@ def profile_onnxruntime_cpu(
     warmup: int = 10,
     runs: int = 100,
     batch: Optional[int] = None,
+    height: Optional[int] = None,
+    width: Optional[int] = None,
     intra_threads: int = 1,
     inter_threads: int = 1,
 ) -> ProfileResult:
@@ -50,7 +52,11 @@ def profile_onnxruntime_cpu(
     engine = OnnxRuntimeCpuEngine()
     engine.load(model_path, intra_threads=intra_threads, inter_threads=inter_threads)
 
-    feeds = engine.make_dummy_inputs(batch_override=batch)
+    feeds = engine.make_dummy_inputs(
+        batch_override=batch,
+        height_override=height,
+        width_override=width,
+    )
 
     #warmup
     for _ in range(warmup):
@@ -68,9 +74,11 @@ def profile_onnxruntime_cpu(
 
     extra = {
         "batch": batch if batch is not None else 1,
-        "input_names": list(feeds.keys()),
+        "input_names": input_names,
         "intra_threads": intra_threads,
         "inter_threads": inter_threads,
+        "height": height,
+        "width":width,
     }
 
     return ProfileResult(

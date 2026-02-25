@@ -64,6 +64,8 @@ def profile(
     warmup: int = typer.Option(10, "--warmup", help="워밍업 반복 횟수"),
     runs: int = typer.Option(100, "--runs", help="측정 반복 횟수"),
     batch: int = typer.Option(1, "--batch", help="배치 크기(입력 0번째 차원 override)"),
+    height: int = typer.Option(0, "--height", help="입력 height override (0이면 사용 안 함)"),
+    width: int = typer.Option(0, "--width", help="입력 width override(0이면 사용 안 함)"),
     intra_threads: int = typer.Option(1, "--intra-threads", help="ONNX Runtime intra_op_num_threads"),
     inter_threads: int = typer.Option(1, "--inter-threads", help="ONNX Runtime inter_op_num_threads"),
     output: str = typer.Option("", "--output", "-o", help="JSON 리포트 저장 경로(미지정 시 stdout 출력)"),
@@ -85,6 +87,8 @@ def profile(
         warmup=warmup,
         runs=runs,
         batch=batch,
+        height=height if height > 0 else None,
+        width=width if width > 0 else None,
         intra_threads=intra_threads,
         inter_threads=inter_threads,
     )
@@ -131,7 +135,9 @@ def profile(
         auto_name = (
             f"{model_name}__"
             f"{prof.engine}_{prof.device}__"
-            f"b{batch}__r{runs}__{ts}.json"
+            f"b{batch}__"
+            f"h{height or 0}w{width or 0}__"
+            f"r{runs}__{ts}.json"
         )
 
         output = os.path.join("reports", auto_name)
