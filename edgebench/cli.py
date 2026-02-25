@@ -9,8 +9,10 @@ from rich import print as rprint
 from edgebench.analyzer import analyze_onnx, collect_package_versions, collect_system_info
 from edgebench.report import EdgeBenchReport, ModelInfo, StaticAnalysis, SystemInfo, utc_now_iso, RuntimeProfile
 from edgebench.profiler import profile_onnxruntime_cpu
+from edgebench.commands.summarize import summarize as summarize_cmd
 
 app = typer.Typer(help="EdgeBench CLI - Edge AI Profiling Tool")
+app.command("summarize")(summarize_cmd)
 
 @app.command()
 def analyze(
