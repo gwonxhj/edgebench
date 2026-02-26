@@ -1,4 +1,4 @@
-.PHONY: save demo_deps demo_models demo_profile demo demo_summary demo_doc demo_clean
+.PHONY: save demo_deps demo_models demo_profile demo demo_summary demo_doc demo_readme demo_clean
 
 SIZES  ?= 224 320 640
 RUNS   ?= 300
@@ -61,22 +61,22 @@ demo_profile: demo_models
 # Summarize reports (stdout)
 # -------------------------
 demo_summary:
-	@echo "==> Summarizing reports"
-	poetry run edgebench summarize "reports/*.json" --format md --sort p99
+	@echo "==> Summarizing reports (stdout)"
+	poetry run edgebench summarize "reports/*.json" --mode both --recent $(RECENT) --sort p99
 
 # -------------------------
 # Write summary to markdown file
 # -------------------------
 demo_doc:
 	@echo "==> Writing benchmark doc: $(BENCH_DOC)"
-	poetry run edgebench summarize "reports/*.json" --format md --sort p99 -o $(BENCH_DOC)
+	poetry run edgebench summarize "reports/*.json" --mode history --sort p99 -o $(BENCH_DOC)
 
 # -------------------------
 # Update README Benchmarks block
 # -------------------------
 demo_readme: demo_doc
 	@echo "==> Updating README.md Benchmarks block"
-	poetry run python scripts/update_readme.py --readme README.md --bench $(BENCH_DOC)
+	poetry run python scripts/update_readme.py --readme README.md --bench $(BENCH_DOC) --recent $(RECENT)
 
 # -------------------------
 # One-shot demo
@@ -87,4 +87,4 @@ demo: demo_profile demo_readme
 # Clean generated artifacts
 # -------------------------
 demo_clean:
-	rm -rf models reports
+	rm -rf models reports $(BENCH_DOC)
