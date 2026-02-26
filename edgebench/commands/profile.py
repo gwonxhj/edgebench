@@ -8,13 +8,17 @@ from rich import print as rprint
 
 from edgebench.analyzer import analyze_onnx, collect_package_versions, collect_system_info
 from edgebench.profiler import profile_onnxruntime_cpu
-from edgebench.report import EdgeBenchReport, ModelInfo, StaticAnalysis, SystemInfo, RuntimeProfile, utc_now_iso
+from edgebench.report import (
+    EdgeBenchReport,
+    ModelInfo,
+    StaticAnalysis,
+    SystemInfo,
+    RuntimeProfile,
+    utc_now_iso,
+)
 
-app = typer.Typer(help="Runtime profiling (onnxruntime cpu)")
 
-
-@app.command("main")
-def profile(
+def profile_cmd(
     model_path: str = typer.Argument(..., help="프로파일링할 ONNX 모델 경로"),
     warmup: int = typer.Option(10, "--warmup", help="워밍업 반복 횟수"),
     runs: int = typer.Option(100, "--runs", help="측정 반복 횟수"),
@@ -73,15 +77,8 @@ def profile(
             latency_ms=prof.latency_ms,
             extra=prof.extra,
         ),
-        system=SystemInfo(
-            os=sysinfo["os"],
-            python=sysinfo["python"],
-            packages=pkgs,
-        ),
-        meta={
-            "machine": sysinfo.get("machine"),
-            "notes": "Phase 1 profile",
-        },
+        system=SystemInfo(os=sysinfo["os"], python=sysinfo["python"], packages=pkgs),
+        meta={"machine": sysinfo.get("machine"), "notes": "Phase 1 profile"},
     )
 
     if not output:

@@ -1,0 +1,108 @@
+{
+  "schema_version": "0.1",
+  "timestamp": "2026-02-26T08:07:04Z",
+  "model": {
+    "path": "models/toy224.onnx",
+    "file_size_bytes": 11277,
+    "sha256": null
+  },
+  "static": {
+    "parameters": 5422,
+    "inputs": [
+      {
+        "name": "images",
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          3,
+          null,
+          null
+        ],
+        "shape_symbols": [
+          null,
+          null,
+          "height",
+          "width"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "logits",
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          10
+        ]
+      }
+    ],
+    "flops_estimate": 126444160,
+    "flops_breakdown": {
+      "conv": 126443520,
+      "gemm": 640,
+      "other": 0,
+      "total": 126444160
+    },
+    "flops_hotspots": [
+      {
+        "name": "node_conv2d_1",
+        "op_type": "Conv",
+        "flops": 115605504
+      },
+      {
+        "name": "node_conv2d",
+        "op_type": "Conv",
+        "flops": 10838016
+      },
+      {
+        "name": "node_linear",
+        "op_type": "Gemm",
+        "flops": 640
+      }
+    ],
+    "flops_assumptions": {
+      "batch": 1,
+      "height": 224,
+      "width": 224,
+      "topk": 10,
+      "note": "rough estimate (Conv/Gemm 중심), output size approximated via stride; for relative comparison"
+    }
+  },
+  "system": {
+    "os": "Linux 6.8.0-1044-azure",
+    "python": "3.12.1",
+    "packages": {
+      "onnx": "1.20.1",
+      "onnxruntime": "1.24.2"
+    }
+  },
+  "meta": {
+    "machine": "x86_64",
+    "notes": "Phase 1 profile"
+  },
+  "runtime": {
+    "engine": "onnxruntime",
+    "device": "cpu",
+    "warmup": 10,
+    "runs": 300,
+    "latency_ms": {
+      "mean": 0.5610750633695716,
+      "std": 0.08714326094330982,
+      "p50": 0.5115294998176978,
+      "p90": 0.700615999630827,
+      "p99": 0.7318650796241853,
+      "min": 0.49110599957202794,
+      "max": 0.9173319995170459
+    },
+    "extra": {
+      "batch": 1,
+      "input_names": [
+        "images"
+      ],
+      "intra_threads": 1,
+      "inter_threads": 1,
+      "height": 224,
+      "width": 224
+    }
+  }
+}

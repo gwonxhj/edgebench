@@ -6,6 +6,7 @@ BATCH  ?= 1
 WARMUP ?= 10
 INTRA  ?= 1
 INTER  ?= 1
+RECENT ?= 5
 
 BENCH_DOC ?= BENCHMARKS.md
 
