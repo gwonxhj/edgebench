@@ -1,20 +1,24 @@
-name: benchmarks-docs
+name: Benchmarks
 
 on:
-  pull_request:
-  push:
-    branches: [main]
   workflow_dispatch:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
 
 jobs:
-  docs-check:
+  bench:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -24,41 +28,30 @@ jobs:
           python -m pip install -U pip
           pip install poetry
 
-      - name: Cache Poetry + venv
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/pypoetry
-            ~/.cache/pip
-            .venv
-          key: ${{ runner.os }}-py${{ steps.pyver.outputs.python-version }}-${{ hashFiles('poetry.lock') }}
-        env:
-          # setup-python에서 python-version output 이름이 바뀌는 경우가 있어도 캐시는 'best effort'
-          # 캐시 실패해도 build는 진행됨
-          PIP_DISABLE_PIP_VERSION_CHECK: "1"
-
       - name: Install deps
         run: |
-          poetry config virtualenvs.in-project true
-          poetry install --no-interaction
+          poetry install
 
-      # ✅ CI에서는 profiling을 돌리지 말고(노이즈), 문서 생성/README 마커 갱신만 검증
-      - name: Regenerate BENCHMARKS.md + README block
+      - name: Run demo (profile -> BENCHMARKS -> README)
         run: |
-          # reports/*.json 이 리포지토리에 존재한다는 가정 (혹은 아래 NOTE 참고)
-          make doc_only RECENT=5
+          make demo
 
-      - name: Fail if docs changed
-        run: |
-          git status --porcelain
-          git diff -- README.md BENCHMARKS.md
-          git diff --exit-code -- README.md BENCHMARKS.md
-
-      - name: Upload docs (optional)
-        if: always()
+      - name: Upload raw reports as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: benchmarks-docs
-          path: |
-            README.md
-            BENCHMARKS.md
+          name: edgebench-reports
+          path: reports/*.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Commit & push docs (README/BENCHMARKS)
+        run: |
+          git config user.name "edgebench-bot"
+          git config user.email "edgebench-bot@users.noreply.github.com"
+          git add README.md BENCHMARKS.md
+          if git diff --cached --quiet; then
+            echo "No doc changes."
+            exit 0
+          fi
+          git commit -m "docs: update benchmark tables"
+          git push

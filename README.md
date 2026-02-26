@@ -81,7 +81,7 @@ EdgeBench는 정적 지표(FLOPs, Parameters)와 동적 지표(Latency)를 하�
 ---
 
 ### 🔄 Auto-Generated Benchmark Results
-> 아래 표는 'make demo' 또는 'make demo_readme' 실행 시 자동 갱신됩니다.
+> 아래 표는 'make demo' 또는 CI 실행 시 자동 갱신됩니다.
 
 <!-- EDGE_BENCH:START -->
 
@@ -111,11 +111,9 @@ EdgeBench는 정적 지표(FLOPs, Parameters)와 동적 지표(Latency)를 하�
 
 <!-- EDGE_BENCH:END -->
 
+> 전체 히스토리(raw)는 BENCHMARKS.md 참고
+
 ---
-
-### 📌 벤치마크 측정 방법론
-
-자세한 측정 방법은 `docs/benchmarking.md` 참고
 
 ## 📜 License
 

@@ -206,5 +206,6 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# Local test models (do not commit)
-models/reports/
+# EdgeBench generated artifacts (do not commit)
+models/
+reprots/
