@@ -78,49 +78,35 @@ EdgeBench는 정적 지표(FLOPs, Parameters)와 동적 지표(Latency)를 하�
 > 환경: GitHub Codespaces (Linux x86_64), ONNX Runtime CPU  
 > 설정: warmup=10, intra_threads=1, inter_threads=1
 
-### YOLOv8n (640×640, batch=1)
+---
 
-> 환경: GitHub Codespaces (Linux x86_64), ONNX Runtime CPU  
-> 설정: warmup=10, runs=50, intra_threads=1, inter_threads=1
+### 🔄 Auto-Generated Benchmark Results
 
-- Parameters: 3,193,923
-- FLOPs (est): 644,336,844,800
-- Latency (ms):
-  - mean: 120.22
-  - p50: 115.67
-  - p90: 125.57
-  - p99: 166.38
-  - std: 11.84
-  - min/max: 113.42 / 172.68
+<!-- EDGE_BENCH:START -->
 
-리포트 JSON: `reports/yolov8n__onnxruntime_cpu__b1__r50__*.json`
+| Model | Engine | Device | Input(HxW) | FLOPs | Mean (ms) | P99 (ms) |
+|---|---|---|---:|---:|---:|---:|
+| toy224.onnx | onnxruntime | cpu | 224x224 | 126444160 | 0.519 | 0.728 |
+| toy224.onnx | onnxruntime | cpu | 224x224 | 126444160 | 0.561 | 0.732 |
+| toy.onnx | onnxruntime | cpu | 224x224 | 126444160 | 0.546 | 1.027 |
+| toy320.onnx | onnxruntime | cpu | 320x320 | 258048640 | 1.085 | 1.419 |
+| toy320.onnx | onnxruntime | cpu | 320x320 | 258048640 | 1.056 | 1.442 |
+| toy.onnx | onnxruntime | cpu | 320x320 | 258048640 | 1.073 | 1.470 |
+| toy320.onnx | onnxruntime | cpu | 320x320 | 258048640 | 1.289 | 3.470 |
+| toy224.onnx | onnxruntime | cpu | 224x224 | 126444160 | 0.719 | 3.886 |
+| toy.onnx | onnxruntime | cpu | 640x640 | 1032192640 | 4.424 | 6.771 |
+| toy640.onnx | onnxruntime | cpu | 640x640 | 1032192640 | 4.720 | 11.804 |
+| toy640.onnx | onnxruntime | cpu | 640x640 | 1032192640 | 5.240 | 12.599 |
+| toy640.onnx | onnxruntime | cpu | 640x640 | 1032192640 | 5.615 | 17.021 |
+| toy640.onnx | onnxruntime | cpu | 640x640 | 1032192640 | 5.094 | 20.910 |
 
-### ToyNet (FLOPs ↔ Latency Scaling Validation)
+<!-- EDGE_BENCH:END -->
 
-> 환경: GitHub Codespaces (Linux x86_64), ONNX Runtime CPU  
-> 설정: warmup=10, runs=300, intra_threads=1, inter_threads=1  
-> 모델: Conv/Linear 기반 ToyNet (dynamic H/W)
+---
 
-| Input (HxW) | FLOPs (est) | Mean (ms) | P99 (ms) |
-|---:|---:|---:|---:|
-| 224×224 | 126,444,160 | 0.546 | 1.027 |
-| 320×320 | 258,048,640 | 1.073 | 1.470 |
-| 640×640 | 1,032,192,640 | 4.424 | 6.771 |
+### 📌 벤치마크 측정 방법론
 
-> 입력 해상도 증가에 따라 FLOPs는 면적(H×W)에 비례해 증가하며,  
-> 실제 latency 역시 유사한 스케일링 경향을 보임을 확인할 수 있습니다.
-
-### 실행 명령
-
-```bash
-edgebench profile models/yolov8n.onnx \
-  --warmup 10 --runs 50 --batch 1 \
-  --intra-threads 1 --inter-threads 1
-```
-
-리포트 JSON: `reports/yolov8n__onnxruntime_cpu__b1__r50__*.json`
-
-벤치마크 측정 방법론: `docs/benchmarking.md`
+자세한 측정 방법은 `docs/benchmarking.md` 참고
 
 ## 📜 License
 

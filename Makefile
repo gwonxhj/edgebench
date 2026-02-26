@@ -71,11 +71,17 @@ demo_doc:
 	poetry run edgebench summarize "reports/*.json" --format md --sort p99 -o $(BENCH_DOC)
 
 # -------------------------
+# Update README Benchmarks block
+# -------------------------
+demo_readme: demo_doc
+	@echo "==> Updating README.md Benchmarks block"
+	poetry run python scripts/update_readme.py --readme README.md --bench $(BENCH_DOC)
+
+# -------------------------
 # One-shot demo
 # -------------------------
-demo: demo_profile demo_doc
-	@echo "✅ demo complete (saved $(BENCH_DOC))"
-
+demo: demo_profile demo_readme
+	@echo "✅ demo complete (saved $(BENCH_DOC) + updated README)"
 # -------------------------
 # Clean generated artifacts
 # -------------------------

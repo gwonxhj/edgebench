@@ -207,4 +207,4 @@ marimo/_lsp/
 __marimo__/
 
 # Local test models (do not commit)
-models/
+models/reports/
