@@ -19,7 +19,10 @@ class StaticAnalysis:
     parameters: int
     inputs: List[Dict[str, Any]]
     outputs: List[Dict[str, Any]]
-    flops_estimate: Optional[float] = None
+    flops_estimate: Optional[int] = None
+    flops_breakdown: Optional[Dict[str, Optional[int]]] = None
+    flops_hotspots: Optional[List[Dict[str, Any]]] = None
+    flops_assumptions: Optional[Dict[str, Any]] = None
 
 @dataclass
 class SystemInfo:

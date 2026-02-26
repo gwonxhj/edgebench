@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import glob
 import json
+import os
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-import os
 import typer
 from rich import print as rprint
+
+app = typer.Typer(help="Summarize EdgeBench JSON reports")
 
 @dataclass
 class Row:
@@ -22,9 +24,11 @@ class Row:
     mean_ms: Optional[float]
     p99_ms: Optional[float]
 
+
 def _load_one(path: str) -> Dict[str, Any]:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
+
 
 def _to_row(path: str, d: Dict[str, Any]) -> Row:
     model_path = (d.get("model") or {}).get("path") or ""
@@ -54,14 +58,15 @@ def _to_row(path: str, d: Dict[str, Any]) -> Row:
         p99_ms=_to_float(latency.get("p99")),
     )
 
-def _md_table(rows: List[Row]) -> str:
-    lines = []
 
-    def _f3(x):
+def _md_table(rows: List[Row]) -> str:
+    def _f3(x: Optional[float]) -> str:
         return "-" if x is None else f"{x:.3f}"
 
+    lines: List[str] = []
     lines.append("| Model | Engine | Device | Input(HxW) | FLOPs | Mean (ms) | P99 (ms) |")
     lines.append("|---|---|---|---:|---:|---:|---:|")
+
     for r in rows:
         hw = f"{r.h}x{r.w}" if (r.h and r.w) else "-"
         lines.append(
@@ -69,6 +74,8 @@ def _md_table(rows: List[Row]) -> str:
         )
     return "\n".join(lines)
 
+
+@app.command("main")
 def summarize(
     pattern: str = typer.Argument(..., help='예: reports/*.json'),
     format: str = typer.Option("md", "--format", help="md"),
