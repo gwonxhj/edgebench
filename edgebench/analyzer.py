@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
-from edgebench.flops import estimate_flops_conv_gemm
+from edgebench.flops import estimate_flops_conv_gemm_detailed
 
 import hashlib
 import os
@@ -81,7 +81,10 @@ class AnalyzeResult:
     sha256: str
     inputs: List[Dict[str, Any]]
     outputs: List[Dict[str, Any]]
-    flops_estimate: Optional[int]
+    flops_estimate: Optional[int] = None
+    flops_breakdown: Optional[Dict[str, Optional[int]]] = None
+    flops_hotspots: Optional[List[Dict[str, Any]]] = None
+    flops_assumptions: Optional[Dict[str, Any]] = None
 
 def analyze_onnx(
     model_path: str,
@@ -96,14 +99,13 @@ def analyze_onnx(
 
     model = onnx.load(model_path)
 
-    flops_est = estimate_flops_conv_gemm(
+    flops_total, flops_breakdown, flops_hotspots, flops_assumptions = estimate_flops_conv_gemm_detailed(
         model,
         height=height,
         width=width,
         batch=1,
+        topk=10,
     )
-
-    flops_total = flops_est.total if flops_est is not None else None
 
     onnx.checker.check_model(model)
 
@@ -118,6 +120,9 @@ def analyze_onnx(
         inputs=inputs,
         outputs=outputs,
         flops_estimate=flops_total,
+        flops_breakdown=flops_breakdown,
+        flops_hotspots=flops_hotspots,
+        flops_assumptions=flops_assumptions,
     )
 
 def collect_system_info() -> Dict[str, Any]:
