@@ -89,12 +89,9 @@ EdgeBench는 정적 지표(FLOPs, Parameters)와 동적 지표(Latency)를 하�
 
 | Model | Engine | Device | Batch | Input(HxW) | FLOPs | Mean (ms) | P99 (ms) | Timestamp (UTC) |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| toy224.onnx | onnxruntime | cpu | 1 | 224x224 | 126,444,160 | 0.499 | 0.521 | 2026-02-26T12:22:48Z |
-| toy.onnx | onnxruntime | cpu | 1 | 224x224 | 126,444,160 | 0.546 | 1.027 | 2026-02-25T09:22:26Z |
-| toy320.onnx | onnxruntime | cpu | 1 | 320x320 | 258,048,640 | 1.007 | 1.038 | 2026-02-26T12:22:49Z |
-| toy.onnx | onnxruntime | cpu | 1 | 320x320 | 258,048,640 | 1.073 | 1.470 | 2026-02-25T09:22:34Z |
-| toy640.onnx | onnxruntime | cpu | 1 | 640x640 | 1,032,192,640 | 4.158 | 5.492 | 2026-02-26T12:22:52Z |
-| toy.onnx | onnxruntime | cpu | 1 | 640x640 | 1,032,192,640 | 4.424 | 6.771 | 2026-02-25T09:22:41Z |
+| toy224.onnx | onnxruntime | cpu | 1 | 224x224 | 126,444,160 | 0.502 | 0.544 | 2026-02-26T12:28:58Z |
+| toy320.onnx | onnxruntime | cpu | 1 | 320x320 | 258,048,640 | 0.997 | 1.150 | 2026-02-26T12:28:59Z |
+| toy640.onnx | onnxruntime | cpu | 1 | 640x640 | 1,032,192,640 | 4.224 | 4.999 | 2026-02-26T12:29:01Z |
 
 <!-- EDGE_BENCH:END -->
 
