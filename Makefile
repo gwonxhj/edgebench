@@ -1,4 +1,4 @@
-.PHONY: save demo_deps demo_models demo_profile demo demo_summary demo_clean
+.PHONY: save demo_deps demo_models demo_profile demo demo_summary demo_doc demo_clean
 
 SIZES  ?= 224 320 640
 RUNS   ?= 300
@@ -6,6 +6,8 @@ BATCH  ?= 1
 WARMUP ?= 10
 INTRA  ?= 1
 INTER  ?= 1
+
+BENCH_DOC ?= BENCHMARKS.md
 
 # -------------------------
 # Save & push (timestamped)
@@ -55,17 +57,24 @@ demo_profile: demo_models
 	@echo "Done. Reports saved under ./reports/"
 
 # -------------------------
-# Summarize reports
+# Summarize reports (stdout)
 # -------------------------
 demo_summary:
 	@echo "==> Summarizing reports"
 	poetry run edgebench summarize "reports/*.json" --format md --sort p99
 
 # -------------------------
+# Write summary to markdown file
+# -------------------------
+demo_doc:
+	@echo "==> Writing benchmark doc: $(BENCH_DOC)"
+	poetry run edgebench summarize "reports/*.json" --format md --sort p99 -o $(BENCH_DOC)
+
+# -------------------------
 # One-shot demo
 # -------------------------
-demo: demo_profile demo_summary
-	@echo "✅ demo complete"
+demo: demo_profile demo_doc
+	@echo "✅ demo complete (saved $(BENCH_DOC))"
 
 # -------------------------
 # Clean generated artifacts
