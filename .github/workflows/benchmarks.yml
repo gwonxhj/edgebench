@@ -80,6 +80,13 @@ jobs:
             echo "_BENCHMARKS.md not found_" >> $GITHUB_STEP_SUMMARY
           fi
 
+      - name: Regression guard (PR only)
+        if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        shell: bash
+        run: |
+          set -euxo pipefail
+          make ci_guard
+
       # ✅ main push에서만: 문서(BENCHMARKS.md/README.md) 커밋/푸시
       - name: Commit docs (main push only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
