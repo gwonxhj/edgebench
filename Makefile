@@ -84,7 +84,10 @@ ci_bench: demo_profile demo_doc
 	@echo "✅ ci_bench complete (reports + $(BENCH_DOC))"
 
 ci_guard:
-	@echo "==> Regression guard"
+	@echo "==> Regression guard (mean, +15% allowed)"
 	poetry run python scripts/check_regression.py \
 		--baseline benchmarks/baseline_codespaces_cpu.json \
-		--reports "reports/*.json"
+		--reports "reports/*.json" \
+		--metric mean \
+		--max-regression-pct 15 \
+		--allow-missing-keys

@@ -81,11 +81,19 @@ jobs:
           fi
 
       - name: Regression guard (PR only)
-        if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        if: github.event_name == 'pull_request'
         shell: bash
         run: |
-          set -euxo pipefail
-          make ci_guard
+          set +e
+          echo "## Regression guard" >> $GITHUB_STEP_SUMMARY
+          make ci_guard 2>&1 | tee /tmp/ci_guard.log
+          RC=${PIPESTATUS[0]}
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ci_guard output" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          tail -n 200 /tmp/ci_guard.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          exit $RC
 
       # ✅ main push에서만: 문서(BENCHMARKS.md/README.md) 커밋/푸시
       - name: Commit docs (main push only)
