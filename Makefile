@@ -72,3 +72,13 @@ demo: demo_profile demo_readme
 
 demo_clean:
 	rm -rf models reports $(BENCH_DOC)
+
+# -------------------------
+# CI-safe benchmark (PR friendly)
+# - generates reports + BENCHMARKS.md only
+# - does NOT touch README
+# - does NOT git commit/push
+# -------------------------
+.PHONY: ci_bench
+ci_bench: demo_profile demo_doc
+	@echo "✅ ci_bench complete (reports + $(BENCH_DOC))"

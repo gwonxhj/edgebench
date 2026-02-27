@@ -37,9 +37,39 @@ jobs:
           poetry run python -m pip install -U pip
           poetry run python -m pip install torch onnxscript
 
-      - name: Run benchmark (generate reports + BENCHMARKS + README block)
+      - name: Run benchmark
+        shell: bash
         run: |
-          make demo_readme
+          set -euxo pipefail
+
+          # PR: generate reports + BENCHMARKS only (artifact for reproducibility)
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            make ci_bench
+          else
+            # push(main): generate + update README block too
+            make demo_readme
+          fi
+
+      - name: Upload reports artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edgebench-reports-${{ github.run_id }}
+          path: |
+            reports/*.json
+            BENCHMARKS.md
+
+      - name: Write summary (Markdown)
+        if: always()
+        shell: bash
+        run: |
+          echo "## EdgeBench Results" >> $GITHUB_STEP_SUMMARY
+          if [[ -f BENCHMARKS.md ]]; then
+            # Latest 섹션만 요약해서 붙임
+            awk 'BEGIN{p=0} /^## Latest/{p=1} /^## History/{p=0} {if(p) print}' BENCHMARKS.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "_BENCHMARKS.md not found_" >> $GITHUB_STEP_SUMMARY
+          fi
 
       # ✅ PR/Push 공통: raw JSON은 artifact로 업로드
       - name: Upload reports artifact
