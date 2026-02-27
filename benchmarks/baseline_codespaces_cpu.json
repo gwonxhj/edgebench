@@ -1,0 +1,12 @@
+{
+  "env": "github-actions ubuntu-latest (x86_64) / onnxruntime cpu / intra=1 inter=1",
+  "thresholds": {
+    "p99_regression_ratio": 1.15,
+    "mean_regression_ratio": 1.20
+  },
+  "cases": [
+    { "model": "toy224.onnx", "engine": "onnxruntime", "device": "cpu", "batch": 1, "h": 224, "w": 224, "p99_ms": 0.90, "mean_ms": 0.60 },
+    { "model": "toy320.onnx", "engine": "onnxruntime", "device": "cpu", "batch": 1, "h": 320, "w": 320, "p99_ms": 1.80, "mean_ms": 1.20 },
+    { "model": "toy640.onnx", "engine": "onnxruntime", "device": "cpu", "batch": 1, "h": 640, "w": 640, "p99_ms": 14.00, "mean_ms": 5.00 }
+  ]
+}
