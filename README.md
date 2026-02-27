@@ -85,11 +85,13 @@ EdgeBench는 정적 지표(FLOPs, Parameters)와 동적 지표(Latency)를 하�
 
 <!-- EDGE_BENCH:START -->
 
+## Latest (recommended)
+
 | Model | Engine | Device | Batch | Input(HxW) | FLOPs | Mean (ms) | P99 (ms) | Timestamp (UTC) |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| toy224.onnx | onnxruntime | cpu | 1 | 224x224 | 126,444,160 | 0.739 | 3.185 | 2026-02-27T06:57:49Z |
-| toy640.onnx | onnxruntime | cpu | 1 | 640x640 | 1,032,192,640 | 4.496 | 6.616 | 2026-02-27T06:57:54Z |
-| toy320.onnx | onnxruntime | cpu | 1 | 320x320 | 258,048,640 | 2.313 | 9.391 | 2026-02-27T06:57:51Z |
+| toy224.onnx | onnxruntime | cpu | 1 | 224x224 | 126,444,160 | 0.500 | 0.540 | 2026-02-27T07:01:05Z |
+| toy320.onnx | onnxruntime | cpu | 1 | 320x320 | 258,048,640 | 1.011 | 1.048 | 2026-02-27T07:01:06Z |
+| toy640.onnx | onnxruntime | cpu | 1 | 640x640 | 1,032,192,640 | 4.019 | 4.126 | 2026-02-27T07:01:08Z |
 
 <!-- EDGE_BENCH:END -->
 
