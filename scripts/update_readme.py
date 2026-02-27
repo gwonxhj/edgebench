@@ -4,32 +4,55 @@ import argparse
 import re
 from pathlib import Path
 
-
 START = "<!-- EDGE_BENCH:START -->"
 END = "<!-- EDGE_BENCH:END -->"
 
+def extract_between_markers(text: str, start: str, end: str) -> str:
+    s = text.find(start)
+    e = text.find(end)
+    if s == -1 or e == -1 or e <= s:
+        raise RuntimeError(f"Could not find marker block: {start} ... {end}")
+    return text[s + len(start) : e].strip("\n")
 
-def extract_latest_block(bench_text: str) -> str:
+def pick_latest_section(bench_text: str) -> str:
     """
-    Return markdown for the 'Latest (recommended)' section only.
+    BENCHMARKS.md 전체에서 'Latest' 섹션을 최대한 관대하게 찾는다.
+    - 우선: '## Latest' 로 시작하는 섹션을 찾고
+    - 그 안에서 첫 번째 markdown table(| Model | ... )를 뽑는다.
     """
-    m = re.search(r"^## Latest \(recommended\)\s*\n\n(.*?)(?=^\#\#\s|\Z)", bench_text, flags=re.M | re.S)
+    # 1) Latest 섹션 덩어리 찾기 (## Latest ... 다음 ## 까지)
+    m = re.search(r"^##\s+Latest.*?$([\s\S]*?)(?=^##\s+|\Z)", bench_text, re.MULTILINE)
     if not m:
-        raise RuntimeError("BENCHMARKS.md does not contain '## Latest (recommended)' section.")
-    body = m.group(1).strip() + "\n"
-    return "## Latest (recommended)\n\n" + body
+        raise RuntimeError("BENCHMARKS.md does not contain a '## Latest' section.")
+    block = m.group(0)
 
-
-def replace_block(readme_text: str, new_block: str) -> str:
-    pattern = re.compile(
-        re.escape(START) + r".*?" + re.escape(END),
-        flags=re.S,
+    # 2) 그 블록에서 첫 번째 md table 추출 (헤더라인 |...| 과 separator |---| 포함)
+    t = re.search(
+        r"(\|[^\n]*\|\n\|[-:| ]+\|\n(?:\|[^\n]*\|\n)+)",
+        block,
+        re.MULTILINE,
     )
-    replacement = START + "\n\n" + new_block.strip() + "\n\n" + END
-    if not pattern.search(readme_text):
-        raise RuntimeError("README.md does not contain EDGE_BENCH markers.")
-    return pattern.sub(replacement, readme_text, count=1)
+    if not t:
+        raise RuntimeError("Could not find a markdown table inside the Latest section.")
+    return t.group(1).strip("\n")
 
+def update_readme(readme_path: Path, bench_path: Path) -> None:
+    readme = readme_path.read_text(encoding="utf-8")
+    bench = bench_path.read_text(encoding="utf-8")
+
+    latest_table = pick_latest_section(bench)
+
+    # README 내 마커 블록 치환
+    s = readme.find(START)
+    e = readme.find(END)
+    if s == -1 or e == -1 or e <= s:
+        raise RuntimeError(f"README.md does not contain marker block: {START} ... {END}")
+
+    new_block = f"{START}\n\n{latest_table}\n\n{END}"
+    out = readme[:s] + new_block + readme[e + len(END):]
+
+    readme_path.write_text(out, encoding="utf-8")
+    print(f"Updated {readme_path} from {bench_path}.")
 
 def main() -> None:
     ap = argparse.ArgumentParser()
@@ -37,18 +60,7 @@ def main() -> None:
     ap.add_argument("--bench", required=True)
     args = ap.parse_args()
 
-    readme_path = Path(args.readme)
-    bench_path = Path(args.bench)
-
-    readme_text = readme_path.read_text(encoding="utf-8")
-    bench_text = bench_path.read_text(encoding="utf-8")
-
-    latest_block = extract_latest_block(bench_text)
-    updated = replace_block(readme_text, latest_block)
-
-    readme_path.write_text(updated, encoding="utf-8")
-    print(f"Updated {readme_path} from {bench_path}.")
-
+    update_readme(Path(args.readme), Path(args.bench))
 
 if __name__ == "__main__":
     main()

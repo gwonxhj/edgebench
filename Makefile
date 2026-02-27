@@ -6,6 +6,7 @@ BATCH  ?= 1
 WARMUP ?= 10
 INTRA  ?= 1
 INTER  ?= 1
+CI     ?= 0
 
 # 문서에 보여줄 최신 결과(최근 N개 파일 기준으로 latest 테이블 생성)
 RECENT ?= 30
